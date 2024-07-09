@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationDeployment.Test", "AzureAppConfigurationDeployment.Test\AzureAppConfigurationDeployment.Test.csproj", "{84BAC625-EC57-43B7-B5C2-9AED308AFF02}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationDeployment.Test.WebApp", "AzureAppConfigurationDeployment.Test.WebApp\AzureAppConfigurationDeployment.Test.WebApp.csproj", "{9E95DBF1-5F91-440F-8769-FA245610D2B8}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureAppConfigurationDeployment", "AzureAppConfigurationDeployment\AzureAppConfigurationDeployment.csproj", "{0E75A672-B24D-465C-A1B4-9A902C8B72C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{84BAC625-EC57-43B7-B5C2-9AED308AFF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{84BAC625-EC57-43B7-B5C2-9AED308AFF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{84BAC625-EC57-43B7-B5C2-9AED308AFF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{84BAC625-EC57-43B7-B5C2-9AED308AFF02}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9E95DBF1-5F91-440F-8769-FA245610D2B8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9E95DBF1-5F91-440F-8769-FA245610D2B8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9E95DBF1-5F91-440F-8769-FA245610D2B8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9E95DBF1-5F91-440F-8769-FA245610D2B8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0E75A672-B24D-465C-A1B4-9A902C8B72C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0E75A672-B24D-465C-A1B4-9A902C8B72C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0E75A672-B24D-465C-A1B4-9A902C8B72C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0E75A672-B24D-465C-A1B4-9A902C8B72C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
