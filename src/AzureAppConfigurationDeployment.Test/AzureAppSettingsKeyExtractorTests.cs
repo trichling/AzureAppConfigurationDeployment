@@ -12,7 +12,7 @@ public class AzureAppSettingsKeyExtractorTests
     [Fact]
     public async Task ExtractKeysFromAppSettings_ExtractsNonEmptyKeysOnly()
     {
-        var source = new AzureAppSettingsKeySource("apetito:accountmanagement:api:", string.Empty, new Uri("https://apetitoappsettings-development.azconfig.io"));
+        var source = new AzureAppSettingsKeySource("accountmanagement:api:", string.Empty, new Uri("https://myappsettings.azconfig.io"));
 
         var keyExtractor = new AzureAppSettingsKeyExtractorForTesting([ source ]);
 
@@ -34,9 +34,9 @@ public class AzureAppSettingsKeyExtractorForTesting : AzureAppSettingsKeyExtract
 
         var page = AsyncPageable<ConfigurationSetting>.FromPages([Page<ConfigurationSetting>.FromValues(
             [
-                new ConfigurationSetting("apetito:accountmanagement:api:ConnectionString", "Server=tcp:apetito.database.windows.net,1433;Initial Catalog=apetito;Persist Security Info=False;User ID=apetito;Password=apetito;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"),
-                new ConfigurationSetting("apetito:accountmanagement:api:LogLevel", "Information"),
-                new ConfigurationSetting("apetito:accountmanagement:api:AllowedHosts", "*")
+                new ConfigurationSetting("accountmanagement:api:ConnectionString", "Server=tcp:someserver,1433;Initial Catalog=accountmanagement;Persist Security Info=False;User ID=secret;"),
+                new ConfigurationSetting("accountmanagement:api:LogLevel", "Information"),
+                new ConfigurationSetting("accountmanagement:api:AllowedHosts", "*")
             ], null, null
         )]);
 
