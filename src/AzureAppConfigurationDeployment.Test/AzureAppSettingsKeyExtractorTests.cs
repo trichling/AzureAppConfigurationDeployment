@@ -9,39 +9,69 @@ namespace AzureAppConfigurationDeployment.Test;
 
 public class AzureAppSettingsKeyExtractorTests
 {
-    [Fact]
-    public async Task ExtractKeysFromAppSettings_ExtractsNonEmptyKeysOnly()
+    private ConfigurationClient _mockConfigurationClient;
+
+    public AzureAppSettingsKeyExtractorTests()
     {
-        var source = new AzureAppSettingsKeySource("accountmanagement:api:", string.Empty, new Uri("https://myappsettings.azconfig.io"));
+        _mockConfigurationClient = Substitute.For<ConfigurationClient>();
+
+        var page = AsyncPageable<ConfigurationSetting>.FromPages([Page<ConfigurationSetting>.FromValues(
+            [
+                new ConfigurationSetting("myservice:api:Logging:LogLevel:Default", "Information"),
+                new ConfigurationSetting("myservice:api:Logging:LogLevel:Microsoft.AspNetCore", "Warning"),
+                new ConfigurationSetting("myservice:api:AllowedHosts", "*"),
+            ], null, null
+        )]);
+
+        _mockConfigurationClient
+            .GetConfigurationSettingsAsync(
+                Arg.Is<SettingSelector>(s => s.KeyFilter == "myservice:api:*" && s.LabelFilter == string.Empty))
+            .Returns(page);
+
+    }
+
+    [Fact]
+    public async Task ExtractKeysFromAppSettings_CallsConfigurationClientWithKeyPrefixAndLabelFilter()
+    {
+        var source = new AzureAppSettingsKeySource("myservice:api:", "Development", new Uri("https://myappsettings.azconfig.io"));
 
         var keyExtractor = new AzureAppSettingsKeyExtractorForTesting([ source ]);
+        keyExtractor.ConfigurationClient = _mockConfigurationClient;
+
+        _ = await keyExtractor.ExtractKeys();
+
+        _mockConfigurationClient.Received(1).GetConfigurationSettingsAsync(
+            Arg.Is<SettingSelector>(s => s.KeyFilter == "myservice:api:*" && s.LabelFilter == "Development"));
+    }
+
+    [Fact]
+    public async Task ExtractKeysFromAppSettings_StripsKeyPrefixFromKeyAndPutsItIntoKeyPrefixProperty()
+    {
+        var source = new AzureAppSettingsKeySource("myservice:api:", string.Empty, new Uri("https://myappsettings.azconfig.io"));
+
+        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting([ source ]);
+        keyExtractor.ConfigurationClient = _mockConfigurationClient;
 
         var keys = await keyExtractor.ExtractKeys();
 
+        // Contains only keys with key prefix 'myservice:api:', but key prefix is not included in the key but in the KeyPrefix property
         Assert.NotEmpty(keys);
+        Assert.All(keys, k => Assert.DoesNotContain(source.KeyPrefix, k.Key));
+        Assert.All(keys, k => Assert.Equal("myservice:api:", k.KeyPrefix));
     }
 }
 
 public class AzureAppSettingsKeyExtractorForTesting : AzureAppSettingsKeyExtractor
 {
+
+    public ConfigurationClient ConfigurationClient { get; set; }
+
     public AzureAppSettingsKeyExtractorForTesting(IEnumerable<AzureAppSettingsKeySource> sources) : base(sources)
     {
     }
 
     protected override ConfigurationClient CreateConfigurationClient(Uri endpoint)
     {
-        var mockClient = Substitute.For<ConfigurationClient>();
-
-        var page = AsyncPageable<ConfigurationSetting>.FromPages([Page<ConfigurationSetting>.FromValues(
-            [
-                new ConfigurationSetting("accountmanagement:api:ConnectionString", "Server=tcp:someserver,1433;Initial Catalog=accountmanagement;Persist Security Info=False;User ID=secret;"),
-                new ConfigurationSetting("accountmanagement:api:LogLevel", "Information"),
-                new ConfigurationSetting("accountmanagement:api:AllowedHosts", "*")
-            ], null, null
-        )]);
-
-        mockClient.GetConfigurationSettingsAsync(Arg.Any<SettingSelector>()).Returns(page);
-
-        return mockClient;
+        return ConfigurationClient;
     }
 }

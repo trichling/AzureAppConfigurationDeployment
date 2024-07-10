@@ -13,16 +13,16 @@ public class ConfigurationKeyExtractor
         _sources = sources;
     }
 
-    public IEnumerable<SourceKey> ExtractKeys()
+    public IEnumerable<ConfigurationKey> ExtractKeys()
     {
-        var sourceKeys = new List<SourceKey>();
+        var sourceKeys = new List<ConfigurationKey>();
         foreach (var source in _sources)
             sourceKeys.AddRange(ExtractKeysFrom(source));
 
         return sourceKeys;
     }
 
-    private IEnumerable<SourceKey> ExtractKeysFrom(ConfigurationKeySource source)
+    private IEnumerable<ConfigurationKey> ExtractKeysFrom(ConfigurationKeySource source)
     {
         var configurationKeys = new ConfigurationBuilder()
             .Add(source.Source)
@@ -32,10 +32,9 @@ public class ConfigurationKeyExtractor
 
         return configurationKeys
             .Where(kvp => kvp.Value != null)
-            .Select(kvp => new SourceKey(
+            .Select(kvp => new ConfigurationKey(
                 source.Label, 
                 kvp.Key, 
-                kvp.Value,
-                "text/plain"));
+                kvp.Value!));
     }
 }

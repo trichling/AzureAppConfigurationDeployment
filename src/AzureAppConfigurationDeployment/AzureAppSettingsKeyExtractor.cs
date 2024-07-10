@@ -13,9 +13,9 @@ public class AzureAppSettingsKeyExtractor
         _sources = sources;
     }
   
-    public async Task<IEnumerable<DestinationKey>> ExtractKeys()
+    public async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeys()
     {
-        var sourceKeys = new List<DestinationKey>();
+        var sourceKeys = new List<AzureAppSettingsKey>();
 
         foreach (var source in _sources)
             sourceKeys.AddRange(await ExtractKeysFrom(source));
@@ -23,7 +23,7 @@ public class AzureAppSettingsKeyExtractor
         return sourceKeys;
     }
 
-    private async Task<IEnumerable<DestinationKey>> ExtractKeysFrom(AzureAppSettingsKeySource source)
+    private async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeysFrom(AzureAppSettingsKeySource source)
     {
         var client = CreateConfigurationClient(source.Source);
 
@@ -33,12 +33,13 @@ public class AzureAppSettingsKeyExtractor
             KeyFilter = source.KeyPrefix + "*"
         });
 
-        var destinationKeys = new List<DestinationKey>();
+        var destinationKeys = new List<AzureAppSettingsKey>();
         await foreach (var setting in settings)
         {
-            destinationKeys.Add(new DestinationKey(
+            destinationKeys.Add(new AzureAppSettingsKey(
+                source.KeyPrefix,
                 setting.Label,
-                setting.Key,
+                setting.Key.Replace(source.KeyPrefix, string.Empty),
                 setting.Value,
                 setting.ContentType));
         }

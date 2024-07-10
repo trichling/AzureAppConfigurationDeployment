@@ -1,3 +1,3 @@
 namespace AzureAppConfigurationDeployment;
 
-public record DestinationKey(string Label, string Key, string Value, string MimeType);
+public record AzureAppSettingsKey(string KeyPrefix, string Label, string Key, string Value, string MimeType);
