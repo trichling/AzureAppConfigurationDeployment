@@ -114,7 +114,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal(MatchedKeyAction.UpdateValueInDestination, result[0].Action);
+        Assert.Equal(MatchedKeyUpdateAction.UpdateValueInDestination, result[0].Action);
     }
 
     [Fact]
@@ -131,7 +131,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal(MatchedKeyAction.CreateInDestination, result[0].Action);
+        Assert.Equal(MatchedKeyUpdateAction.CreateInDestination, result[0].Action);
     }
 
     [Fact]
@@ -148,7 +148,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
 
         // Assert
         Assert.Single(result);
-        Assert.Equal(MatchedKeyAction.Ignore, result[0].Action);
+        Assert.Equal(MatchedKeyUpdateAction.Ignore, result[0].Action);
     }
 
     [Fact]

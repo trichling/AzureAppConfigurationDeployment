@@ -35,7 +35,7 @@ public class AzureAppSettingsKeyExtractorTests
     {
         var source = new AzureAppSettingsKeySource("myservice:api:", "Development", new Uri("https://myappsettings.azconfig.io"));
 
-        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting([ source ]);
+        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
         keyExtractor.ConfigurationClient = _mockConfigurationClient;
 
         _ = await keyExtractor.ExtractKeys();
@@ -49,7 +49,7 @@ public class AzureAppSettingsKeyExtractorTests
     {
         var source = new AzureAppSettingsKeySource("myservice:api:", string.Empty, new Uri("https://myappsettings.azconfig.io"));
 
-        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting([ source ]);
+        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
         keyExtractor.ConfigurationClient = _mockConfigurationClient;
 
         var keys = await keyExtractor.ExtractKeys();
@@ -66,7 +66,7 @@ public class AzureAppSettingsKeyExtractorForTesting : AzureAppSettingsKeyExtract
 
     public ConfigurationClient ConfigurationClient { get; set; }
 
-    public AzureAppSettingsKeyExtractorForTesting(IEnumerable<AzureAppSettingsKeySource> sources) : base(sources)
+    public AzureAppSettingsKeyExtractorForTesting(AzureAppSettingsKeySource source) : base(source)
     {
     }
 

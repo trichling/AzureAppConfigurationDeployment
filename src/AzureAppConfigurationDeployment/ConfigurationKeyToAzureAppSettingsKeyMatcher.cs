@@ -36,39 +36,17 @@ public static class ConfigurationKeyToAzureAppSettingsKeyMatcher
         return matchResults;
     }   
 
-    public static List<MatchedKeyActions> AssignUpdateActions(List<MatchedKey> matchedKeys)
+    public static List<MatchedKeyAction> AssignUpdateActions(List<MatchedKey> matchedKeys)
     {
         return matchedKeys.Select(mk =>
         {
            return mk.MatchType switch
            {
-               MatchedKeyType.ExactMatch => new MatchedKeyActions(mk, MatchedKeyAction.UpdateValueInDestination),
-               MatchedKeyType.MissingInDestinationMatch => new MatchedKeyActions(mk, MatchedKeyAction.CreateInDestination),
-               MatchedKeyType.MissingInSourceMatch => new MatchedKeyActions(mk, MatchedKeyAction.Ignore),
+               MatchedKeyType.ExactMatch => new MatchedKeyAction(mk, MatchedKeyUpdateAction.UpdateValueInDestination),
+               MatchedKeyType.MissingInDestinationMatch => new MatchedKeyAction(mk, MatchedKeyUpdateAction.CreateInDestination),
+               MatchedKeyType.MissingInSourceMatch => new MatchedKeyAction(mk, MatchedKeyUpdateAction.Ignore),
            };
         }).ToList();
     }
 
-}
-
-public record MatchedKeyActions(MatchedKey MatchedKey, MatchedKeyAction Action);
-
-
-public enum MatchedKeyAction
-{
-    Ignore,
-    UpdateValueInDestination,
-    CreateInDestination,
-    CreateInSource,
-    DeleteInDestination,
-    DeleteInSource,
-}
-
-public record MatchedKey(ConfigurationKey SourceKey, AzureAppSettingsKey DestinationKey, MatchedKeyType MatchType);
-
-public enum MatchedKeyType
-{
-    ExactMatch,
-    MissingInDestinationMatch,
-    MissingInSourceMatch
 }

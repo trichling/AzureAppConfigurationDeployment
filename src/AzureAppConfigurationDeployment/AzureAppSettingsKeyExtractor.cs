@@ -6,19 +6,18 @@ namespace AzureAppConfigurationDeployment;
 
 public class AzureAppSettingsKeyExtractor
 {
-    private readonly IEnumerable<AzureAppSettingsKeySource> _sources;
+    private readonly AzureAppSettingsKeySource _source;
 
-    public AzureAppSettingsKeyExtractor(IEnumerable<AzureAppSettingsKeySource> sources)
+    public AzureAppSettingsKeyExtractor(AzureAppSettingsKeySource source)
     {
-        _sources = sources;
+        _source = source;
     }
   
     public async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeys()
     {
         var sourceKeys = new List<AzureAppSettingsKey>();
 
-        foreach (var source in _sources)
-            sourceKeys.AddRange(await ExtractKeysFrom(source));
+        sourceKeys.AddRange(await ExtractKeysFrom(_source));
 
         return sourceKeys;
     }
