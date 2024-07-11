@@ -5,5 +5,7 @@ public record AzureAppSettingsKey(string KeyPrefix, string Label, string Key, st
     public string KeyPrefixWithoutTrailingColon => KeyPrefix.EndsWith(':') ? KeyPrefix.Substring(0, KeyPrefix.Length - 1) : KeyPrefix;
 
     public string KeyWithKeyPrefix => $"{KeyPrefixWithoutTrailingColon}:{Key}";
+
+    public bool IsKeyVaultReference => MimeType == "application/vnd.microsoft.appconfig.keyvaultref+json;charset=utf-8";
     
 }
