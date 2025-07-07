@@ -1,6 +1,5 @@
-
 using Azure.Data.AppConfiguration;
-using Azure.Identity; 
+using Azure.Identity;
 
 namespace AzureAppConfigurationDeployment;
 
@@ -12,7 +11,7 @@ public class AzureAppSettingsKeyExtractor
     {
         _source = source;
     }
-  
+
     public async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeys()
     {
         var sourceKeys = new List<AzureAppSettingsKey>();
@@ -22,25 +21,28 @@ public class AzureAppSettingsKeyExtractor
         return sourceKeys;
     }
 
-    private async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeysFrom(AzureAppSettingsKeySource source)
+    private async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeysFrom(
+        AzureAppSettingsKeySource source
+    )
     {
         var client = CreateConfigurationClient(source.Source);
 
-        var settings = client.GetConfigurationSettingsAsync(new SettingSelector()
-        {
-            LabelFilter = source.Label,
-            KeyFilter = source.KeyPrefix + "*"
-        });
+        var settings = client.GetConfigurationSettingsAsync(
+            new SettingSelector() { LabelFilter = source.Label, KeyFilter = source.KeyPrefix + "*" }
+        );
 
         var destinationKeys = new List<AzureAppSettingsKey>();
         await foreach (var setting in settings)
         {
-            destinationKeys.Add(new AzureAppSettingsKey(
-                source.KeyPrefix,
-                setting.Label,
-                setting.Key.Replace(source.KeyPrefix, string.Empty),
-                setting.Value,
-                setting.ContentType));
+            destinationKeys.Add(
+                new AzureAppSettingsKey(
+                    source.KeyPrefix,
+                    setting.Label,
+                    setting.Key.Replace(source.KeyPrefix, string.Empty),
+                    setting.Value,
+                    setting.ContentType
+                )
+            );
         }
 
         return destinationKeys;

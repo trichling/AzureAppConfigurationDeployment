@@ -18,10 +18,11 @@ public class AzureAppSettingsChangeProcessor
     {
         _configurationClient = CreateConfigurationClient(_source.Source);
 
-        var relevantActions = matchedKeyActions.Where(a => 
-                a.Action == MatchedKeyUpdateAction.UpdateValueInDestination
-            ||  a.Action == MatchedKeyUpdateAction.CreateInDestination
-            ||  a.Action == MatchedKeyUpdateAction.DeleteInDestination);
+        var relevantActions = matchedKeyActions.Where(a =>
+            a.Action == MatchedKeyUpdateAction.UpdateValueInDestination
+            || a.Action == MatchedKeyUpdateAction.CreateInDestination
+            || a.Action == MatchedKeyUpdateAction.DeleteInDestination
+        );
 
         foreach (var action in relevantActions)
         {
@@ -42,15 +43,19 @@ public class AzureAppSettingsChangeProcessor
 
     private async Task DeleteInDestination(MatchedKey matchedKey)
     {
-        await _configurationClient.DeleteConfigurationSettingAsync(matchedKey.DestinationKey.KeyWithKeyPrefix, matchedKey.DestinationKey.Label);
+        await _configurationClient.DeleteConfigurationSettingAsync(
+            matchedKey.DestinationKey.KeyWithKeyPrefix,
+            matchedKey.DestinationKey.Label
+        );
     }
 
     private async Task CreateInDestination(MatchedKey matchedKey)
     {
         await _configurationClient.AddConfigurationSettingAsync(
-                matchedKey.SourceKey.ApplyKeyPrefix(_source.KeyPrefix),
-                matchedKey.SourceKey.Value,
-                matchedKey.SourceKey.Label);
+            matchedKey.SourceKey.ApplyKeyPrefix(_source.KeyPrefix),
+            matchedKey.SourceKey.Value,
+            matchedKey.SourceKey.Label
+        );
     }
 
     private async Task UpdateValueInDestination(MatchedKey matchedKey)
@@ -58,12 +63,12 @@ public class AzureAppSettingsChangeProcessor
         await _configurationClient.SetConfigurationSettingAsync(
             matchedKey.DestinationKey.KeyWithKeyPrefix,
             matchedKey.SourceKey.Value,
-            matchedKey.DestinationKey.Label);
+            matchedKey.DestinationKey.Label
+        );
     }
 
     protected virtual ConfigurationClient CreateConfigurationClient(Uri endpoint)
     {
         return new ConfigurationClient(endpoint, new DefaultAzureCredential());
     }
-
 }

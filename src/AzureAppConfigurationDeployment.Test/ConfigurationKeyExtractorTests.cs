@@ -1,10 +1,8 @@
 using System.ComponentModel;
-
 using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.Configuration.Memory;
 
 namespace AzureAppConfigurationDeployment.Test;
-
 
 public class ConfigurationKeyExtractorTests
 {
@@ -15,12 +13,12 @@ public class ConfigurationKeyExtractorTests
         {
             InitialData = new Dictionary<string, string?>
             {
-                {"Logging", null},
-                {"Logging:LogLevel", null},
-                {"Logging:LogLevel:Microsoft.AspNetCore", "Warning"},
-                {"Logging:LogLevel:Default", "Information"},
-                {"AllowedHosts", "*"}
-            }
+                { "Logging", null },
+                { "Logging:LogLevel", null },
+                { "Logging:LogLevel:Microsoft.AspNetCore", "Warning" },
+                { "Logging:LogLevel:Default", "Information" },
+                { "AllowedHosts", "*" },
+            },
         };
 
         var keySource = new ConfigurationKeySource("", inMemorySource);

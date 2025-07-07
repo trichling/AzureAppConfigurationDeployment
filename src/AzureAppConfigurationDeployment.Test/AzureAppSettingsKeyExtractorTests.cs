@@ -1,11 +1,9 @@
+using Azure;
+using Azure.Core;
+using Azure.Data.AppConfiguration;
 using NSubstitute; // Add this using directive
 
-using Azure.Data.AppConfiguration;
-using Azure.Core;
-using Azure;
-
 namespace AzureAppConfigurationDeployment.Test;
-
 
 public class AzureAppSettingsKeyExtractorTests
 {
@@ -15,39 +13,66 @@ public class AzureAppSettingsKeyExtractorTests
     {
         _mockConfigurationClient = Substitute.For<ConfigurationClient>();
 
-        var page = AsyncPageable<ConfigurationSetting>.FromPages([Page<ConfigurationSetting>.FromValues(
+        var page = AsyncPageable<ConfigurationSetting>.FromPages(
             [
-                new ConfigurationSetting("myservice:api:Logging:LogLevel:Default", "Information"),
-                new ConfigurationSetting("myservice:api:Logging:LogLevel:Microsoft.AspNetCore", "Warning"),
-                new ConfigurationSetting("myservice:api:AllowedHosts", "*"),
-            ], null, null
-        )]);
+                Page<ConfigurationSetting>.FromValues(
+                    [
+                        new ConfigurationSetting(
+                            "myservice:api:Logging:LogLevel:Default",
+                            "Information"
+                        ),
+                        new ConfigurationSetting(
+                            "myservice:api:Logging:LogLevel:Microsoft.AspNetCore",
+                            "Warning"
+                        ),
+                        new ConfigurationSetting("myservice:api:AllowedHosts", "*"),
+                    ],
+                    null,
+                    null
+                ),
+            ]
+        );
 
         _mockConfigurationClient
             .GetConfigurationSettingsAsync(
-                Arg.Is<SettingSelector>(s => s.KeyFilter == "myservice:api:*" && s.LabelFilter == string.Empty))
+                Arg.Is<SettingSelector>(s =>
+                    s.KeyFilter == "myservice:api:*" && s.LabelFilter == string.Empty
+                )
+            )
             .Returns(page);
-
     }
 
     [Fact]
     public async Task ExtractKeysFromAppSettings_CallsConfigurationClientWithKeyPrefixAndLabelFilter()
     {
-        var source = new AzureAppSettingsKeySource("myservice:api:", "Development", new Uri("https://myappsettings.azconfig.io"));
+        var source = new AzureAppSettingsKeySource(
+            "myservice:api:",
+            "Development",
+            new Uri("https://myappsettings.azconfig.io")
+        );
 
         var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
         keyExtractor.ConfigurationClient = _mockConfigurationClient;
 
         _ = await keyExtractor.ExtractKeys();
 
-        _mockConfigurationClient.Received(1).GetConfigurationSettingsAsync(
-            Arg.Is<SettingSelector>(s => s.KeyFilter == "myservice:api:*" && s.LabelFilter == "Development"));
+        _mockConfigurationClient
+            .Received(1)
+            .GetConfigurationSettingsAsync(
+                Arg.Is<SettingSelector>(s =>
+                    s.KeyFilter == "myservice:api:*" && s.LabelFilter == "Development"
+                )
+            );
     }
 
     [Fact]
     public async Task ExtractKeysFromAppSettings_StripsKeyPrefixFromKeyAndPutsItIntoKeyPrefixProperty()
     {
-        var source = new AzureAppSettingsKeySource("myservice:api:", string.Empty, new Uri("https://myappsettings.azconfig.io"));
+        var source = new AzureAppSettingsKeySource(
+            "myservice:api:",
+            string.Empty,
+            new Uri("https://myappsettings.azconfig.io")
+        );
 
         var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
         keyExtractor.ConfigurationClient = _mockConfigurationClient;
@@ -63,12 +88,10 @@ public class AzureAppSettingsKeyExtractorTests
 
 public class AzureAppSettingsKeyExtractorForTesting : AzureAppSettingsKeyExtractor
 {
-
     public ConfigurationClient ConfigurationClient { get; set; }
 
-    public AzureAppSettingsKeyExtractorForTesting(AzureAppSettingsKeySource source) : base(source)
-    {
-    }
+    public AzureAppSettingsKeyExtractorForTesting(AzureAppSettingsKeySource source)
+        : base(source) { }
 
     protected override ConfigurationClient CreateConfigurationClient(Uri endpoint)
     {

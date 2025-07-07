@@ -1,9 +1,9 @@
-using Xunit;
-using NSubstitute;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Azure.Data.AppConfiguration;
 using AzureAppConfigurationDeployment;
-using System.Threading.Tasks;
-using System.Collections.Generic;
+using NSubstitute;
+using Xunit;
 
 namespace AzureAppConfigurationDeployment.Test;
 
@@ -15,7 +15,11 @@ public class AzureAppSettingsChangeProcessorTests
     public AzureAppSettingsChangeProcessorTests()
     {
         _mockClient = Substitute.For<ConfigurationClient>();
-        var source = new AzureAppSettingsKeySource("myservice:api:", string.Empty, new Uri("https://myconfig.azconfig.io")); 
+        var source = new AzureAppSettingsKeySource(
+            "myservice:api:",
+            string.Empty,
+            new Uri("https://myconfig.azconfig.io")
+        );
         _processor = new AzureAppSettingsChangeProcessorForTesting(source, _mockClient);
     }
 
@@ -25,35 +29,33 @@ public class AzureAppSettingsChangeProcessorTests
         // Arrange
         var matchedKeyActions = new List<MatchedKeyAction>
         {
-            new MatchedKeyAction
-            (
+            new MatchedKeyAction(
                 Action: MatchedKeyUpdateAction.UpdateValueInDestination,
-                MatchedKey: new MatchedKey
-                (
-                    DestinationKey: new AzureAppSettingsKey
-                    (
+                MatchedKey: new MatchedKey(
+                    DestinationKey: new AzureAppSettingsKey(
                         "myservice:api",
                         "TestLabel",
                         "TestKey",
                         "TestValue",
                         string.Empty
                     ),
-                    SourceKey: new ConfigurationKey
-                    (
+                    SourceKey: new ConfigurationKey(
                         Key: "TestKey",
                         Label: "TestLabel",
                         Value: "NewTestValue"
                     ),
                     MatchType: MatchedKeyType.ExactMatch
                 )
-            )
+            ),
         };
 
         // Act
         await _processor.ProcessChanges(matchedKeyActions);
 
         // Assert
-        await _mockClient.Received(1).SetConfigurationSettingAsync("myservice:api:TestKey", "NewTestValue", "TestLabel");
+        await _mockClient
+            .Received(1)
+            .SetConfigurationSettingAsync("myservice:api:TestKey", "NewTestValue", "TestLabel");
     }
 
     [Fact]
@@ -62,43 +64,43 @@ public class AzureAppSettingsChangeProcessorTests
         // Arrange
         var matchedKeyActions = new List<MatchedKeyAction>
         {
-            new MatchedKeyAction
-            (
+            new MatchedKeyAction(
                 Action: MatchedKeyUpdateAction.CreateInDestination,
-                MatchedKey: new MatchedKey
-                (
+                MatchedKey: new MatchedKey(
                     DestinationKey: null,
-                    SourceKey: new ConfigurationKey
-                    (
+                    SourceKey: new ConfigurationKey(
                         Key: "SourceTestKey",
                         Label: "SourceTestLabel",
                         Value: "SourceTestValue"
                     ),
                     MatchType: MatchedKeyType.MissingInDestinationMatch
                 )
-            )
+            ),
         };
-        
+
         // Act
         await _processor.ProcessChanges(matchedKeyActions);
 
         // Assert
-        await _mockClient.Received(1).AddConfigurationSettingAsync("myservice:api:SourceTestKey", "SourceTestValue", "SourceTestLabel");
+        await _mockClient
+            .Received(1)
+            .AddConfigurationSettingAsync(
+                "myservice:api:SourceTestKey",
+                "SourceTestValue",
+                "SourceTestLabel"
+            );
     }
 
     [Fact]
     public async Task ProcessChanges_CallsDeleteInDestination()
     {
         // Arrange
-                var matchedKeyActions = new List<MatchedKeyAction>
+        var matchedKeyActions = new List<MatchedKeyAction>
         {
-            new MatchedKeyAction
-            (
+            new MatchedKeyAction(
                 Action: MatchedKeyUpdateAction.DeleteInDestination,
-                MatchedKey: new MatchedKey
-                (
-                    DestinationKey: new AzureAppSettingsKey
-                    (
+                MatchedKey: new MatchedKey(
+                    DestinationKey: new AzureAppSettingsKey(
                         "myservice:api",
                         "DestinationTestLabel",
                         "DestinationTestKey",
@@ -108,24 +110,31 @@ public class AzureAppSettingsChangeProcessorTests
                     SourceKey: null,
                     MatchType: MatchedKeyType.MissingInSourceMatch
                 )
-            )
+            ),
         };
-       
 
         // Act
         await _processor.ProcessChanges(matchedKeyActions);
 
         // Assert
-        await _mockClient.Received(1).DeleteConfigurationSettingAsync("myservice:api:DestinationTestKey", "DestinationTestLabel");
+        await _mockClient
+            .Received(1)
+            .DeleteConfigurationSettingAsync(
+                "myservice:api:DestinationTestKey",
+                "DestinationTestLabel"
+            );
     }
 }
 
 public class AzureAppSettingsChangeProcessorForTesting : AzureAppSettingsChangeProcessor
 {
-
     public ConfigurationClient Client { get; set; }
 
-    public AzureAppSettingsChangeProcessorForTesting(AzureAppSettingsKeySource source, ConfigurationClient client) : base(source)
+    public AzureAppSettingsChangeProcessorForTesting(
+        AzureAppSettingsKeySource source,
+        ConfigurationClient client
+    )
+        : base(source)
     {
         Client = client;
     }

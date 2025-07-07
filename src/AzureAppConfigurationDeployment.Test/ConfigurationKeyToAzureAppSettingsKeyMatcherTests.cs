@@ -8,15 +8,18 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         // Arrange
         var sourceKeys = new List<ConfigurationKey>
         {
-            new ConfigurationKey("Label1", "Key1", string.Empty)
+            new ConfigurationKey("Label1", "Key1", string.Empty),
         };
         var destinationKeys = new List<AzureAppSettingsKey>
         {
-            new AzureAppSettingsKey(string.Empty, "Label1", "Key1", string.Empty, string.Empty)
+            new AzureAppSettingsKey(string.Empty, "Label1", "Key1", string.Empty, string.Empty),
         };
 
         // Act
-        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(sourceKeys, destinationKeys);
+        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+            sourceKeys,
+            destinationKeys
+        );
 
         // Assert
         Assert.Single(result);
@@ -29,12 +32,15 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         // Arrange
         var sourceKeys = new List<ConfigurationKey>
         {
-            new ConfigurationKey("Label1", "Key1", string.Empty)
+            new ConfigurationKey("Label1", "Key1", string.Empty),
         };
         var destinationKeys = new List<AzureAppSettingsKey>();
 
         // Act
-        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(sourceKeys, destinationKeys);
+        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+            sourceKeys,
+            destinationKeys
+        );
 
         // Assert
         Assert.Single(result);
@@ -48,11 +54,14 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         var sourceKeys = new List<ConfigurationKey>();
         var destinationKeys = new List<AzureAppSettingsKey>
         {
-            new AzureAppSettingsKey(string.Empty, "Label1", "Key1", string.Empty, string.Empty)
+            new AzureAppSettingsKey(string.Empty, "Label1", "Key1", string.Empty, string.Empty),
         };
 
         // Act
-        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(sourceKeys, destinationKeys);
+        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+            sourceKeys,
+            destinationKeys
+        );
 
         // Assert
         Assert.Single(result);
@@ -67,7 +76,10 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         var destinationKeys = new List<AzureAppSettingsKey>();
 
         // Act
-        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(sourceKeys, destinationKeys);
+        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+            sourceKeys,
+            destinationKeys
+        );
 
         // Assert
         Assert.Empty(result);
@@ -80,25 +92,26 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         var sourceKeys = new List<ConfigurationKey>
         {
             new ConfigurationKey("Label1", "Key1", string.Empty),
-            new ConfigurationKey("Label1", "Key2", string.Empty)
+            new ConfigurationKey("Label1", "Key2", string.Empty),
         };
         var destinationKeys = new List<AzureAppSettingsKey>
         {
             new AzureAppSettingsKey(string.Empty, "Label1", "Key1", string.Empty, string.Empty),
-            new AzureAppSettingsKey(string.Empty, "Label1", "Key3", string.Empty, string.Empty)
+            new AzureAppSettingsKey(string.Empty, "Label1", "Key3", string.Empty, string.Empty),
         };
 
         // Act
-        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(sourceKeys, destinationKeys);
+        var result = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+            sourceKeys,
+            destinationKeys
+        );
 
         // Assert
         Assert.Equal(3, result.Count);
         Assert.Equal(MatchedKeyType.ExactMatch, result[0].MatchType);
         Assert.Equal(MatchedKeyType.MissingInDestinationMatch, result[1].MatchType);
         Assert.Equal(MatchedKeyType.MissingInSourceMatch, result[2].MatchType);
-
     }
-
 
     [Fact]
     public void AssignUpdateActions_WithExactMatch_AssignsUpdateValueInDestination()
@@ -106,7 +119,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         // Arrange
         var matchedKeys = new List<MatchedKey>
         {
-            new MatchedKey(null, null, MatchedKeyType.ExactMatch)
+            new MatchedKey(null, null, MatchedKeyType.ExactMatch),
         };
 
         // Act
@@ -123,7 +136,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         // Arrange
         var matchedKeys = new List<MatchedKey>
         {
-            new MatchedKey(null, null, MatchedKeyType.MissingInDestinationMatch)
+            new MatchedKey(null, null, MatchedKeyType.MissingInDestinationMatch),
         };
 
         // Act
@@ -140,7 +153,7 @@ public class ConfigurationKeyToAzureAppSettingsKeyMatcherTests
         // Arrange
         var matchedKeys = new List<MatchedKey>
         {
-            new MatchedKey(null, null, MatchedKeyType.MissingInSourceMatch)
+            new MatchedKey(null, null, MatchedKeyType.MissingInSourceMatch),
         };
 
         // Act

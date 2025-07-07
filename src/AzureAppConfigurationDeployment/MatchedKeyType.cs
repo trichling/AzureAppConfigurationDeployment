@@ -4,5 +4,5 @@ public enum MatchedKeyType
 {
     ExactMatch,
     MissingInDestinationMatch,
-    MissingInSourceMatch
+    MissingInSourceMatch,
 }

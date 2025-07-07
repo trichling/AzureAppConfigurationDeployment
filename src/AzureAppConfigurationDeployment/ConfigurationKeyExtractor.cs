@@ -1,4 +1,3 @@
-
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Json;
 
@@ -29,12 +28,8 @@ public class ConfigurationKeyExtractor
             .Build()
             .AsEnumerable();
 
-
         return configurationKeys
             .Where(kvp => kvp.Value != null)
-            .Select(kvp => new ConfigurationKey(
-                source.Label, 
-                kvp.Key, 
-                kvp.Value!));
+            .Select(kvp => new ConfigurationKey(source.Label, kvp.Key, kvp.Value!));
     }
 }
