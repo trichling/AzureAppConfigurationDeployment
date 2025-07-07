@@ -1,3 +1,4 @@
+using System.Text.Json;
 using Azure.Data.AppConfiguration;
 using Azure.Identity;
 
@@ -19,6 +20,31 @@ public class AzureAppSettingsKeyExtractor
         sourceKeys.AddRange(await ExtractKeysFrom(_source));
 
         return sourceKeys;
+    }
+
+    public async Task<IEnumerable<AzureAppSettingsKey>> ImportFrom(string fileName)
+    {
+        var json = File.ReadAllText(fileName);
+
+        var sourceKeys = JsonSerializer.Deserialize<IEnumerable<AzureAppSettingsKey>>(json);
+
+        return sourceKeys;
+    }
+
+    public async Task Dump(string fileName)
+    {
+        var keys = await ExtractKeys();
+        var json = JsonSerializer.Serialize(
+            keys,
+            new JsonSerializerOptions
+            {
+                WriteIndented = true,
+                IgnoreReadOnlyFields = true,
+                IgnoreReadOnlyProperties = true,
+            }
+        );
+
+        await File.WriteAllTextAsync(fileName, json);
     }
 
     private async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeysFrom(
