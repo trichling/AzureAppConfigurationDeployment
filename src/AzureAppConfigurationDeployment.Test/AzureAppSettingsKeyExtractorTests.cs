@@ -3,6 +3,7 @@ using System.Text.Json;
 using Azure;
 using Azure.Core;
 using Azure.Data.AppConfiguration;
+
 using NSubstitute; // Add this using directive
 
 namespace AzureAppConfigurationDeployment.Test;
@@ -53,8 +54,10 @@ public class AzureAppSettingsKeyExtractorTests
             new Uri("https://myappsettings.azconfig.io")
         );
 
-        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
-        keyExtractor.ConfigurationClient = _mockConfigurationClient;
+        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source)
+        {
+            ConfigurationClient = _mockConfigurationClient
+        };
 
         _ = await keyExtractor.ExtractKeys();
 
@@ -76,8 +79,10 @@ public class AzureAppSettingsKeyExtractorTests
             new Uri("https://myappsettings.azconfig.io")
         );
 
-        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
-        keyExtractor.ConfigurationClient = _mockConfigurationClient;
+        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source)
+        {
+            ConfigurationClient = _mockConfigurationClient
+        };
 
         var keys = await keyExtractor.ExtractKeys();
 
@@ -87,34 +92,11 @@ public class AzureAppSettingsKeyExtractorTests
         Assert.All(keys, k => Assert.Equal("myservice:api:", k.KeyPrefix));
     }
 
-    [Fact]
-    public async Task ExtractKeysFromAppSettings_CanDumpToFile()
-    {
-        var source = new AzureAppSettingsKeySource(
-            "myservice:api:",
-            string.Empty,
-            new Uri("https://myappsettings.azconfig.io")
-        );
-
-        var keyExtractor = new AzureAppSettingsKeyExtractorForTesting(source);
-        keyExtractor.ConfigurationClient = _mockConfigurationClient;
-
-        var keysFromSource = await keyExtractor.ExtractKeys();
-        await keyExtractor.Dump("dump.json");
-
-        Assert.True(File.Exists("dump.json"));
-        var jsonFromDump = await File.ReadAllTextAsync("dump.json");
-        Assert.False(string.IsNullOrWhiteSpace(jsonFromDump));
-
-        var keysFromDump = await keyExtractor.ImportFrom("dump.json");
-
-        Assert.Equal(keysFromDump.Count(), keysFromSource.Count());
-    }
 }
 
 public class AzureAppSettingsKeyExtractorForTesting : AzureAppSettingsKeyExtractor
 {
-    public ConfigurationClient ConfigurationClient { get; set; }
+    public required ConfigurationClient ConfigurationClient { get; set; }
 
     public AzureAppSettingsKeyExtractorForTesting(AzureAppSettingsKeySource source)
         : base(source) { }

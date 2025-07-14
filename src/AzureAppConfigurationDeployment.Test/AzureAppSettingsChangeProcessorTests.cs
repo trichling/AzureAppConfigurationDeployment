@@ -1,8 +1,12 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
+
 using Azure.Data.AppConfiguration;
+
 using AzureAppConfigurationDeployment;
+
 using NSubstitute;
+
 using Xunit;
 
 namespace AzureAppConfigurationDeployment.Test;
@@ -32,14 +36,14 @@ public class AzureAppSettingsChangeProcessorTests
             new MatchedKeyAction(
                 Action: MatchedKeyUpdateAction.UpdateValueInDestination,
                 MatchedKey: new MatchedKey(
-                    DestinationKey: new AzureAppSettingsKey(
+                    DestinationKey: new SettingsKey(
                         "myservice:api",
                         "TestLabel",
                         "TestKey",
                         "TestValue",
                         string.Empty
                     ),
-                    SourceKey: new ConfigurationKey(
+                    SourceKey: new SettingsKey(
                         Key: "TestKey",
                         Label: "TestLabel",
                         Value: "NewTestValue"
@@ -68,7 +72,7 @@ public class AzureAppSettingsChangeProcessorTests
                 Action: MatchedKeyUpdateAction.CreateInDestination,
                 MatchedKey: new MatchedKey(
                     DestinationKey: null,
-                    SourceKey: new ConfigurationKey(
+                    SourceKey: new SettingsKey(
                         Key: "SourceTestKey",
                         Label: "SourceTestLabel",
                         Value: "SourceTestValue"
@@ -100,7 +104,7 @@ public class AzureAppSettingsChangeProcessorTests
             new MatchedKeyAction(
                 Action: MatchedKeyUpdateAction.DeleteInDestination,
                 MatchedKey: new MatchedKey(
-                    DestinationKey: new AzureAppSettingsKey(
+                    DestinationKey: new SettingsKey(
                         "myservice:api",
                         "DestinationTestLabel",
                         "DestinationTestKey",

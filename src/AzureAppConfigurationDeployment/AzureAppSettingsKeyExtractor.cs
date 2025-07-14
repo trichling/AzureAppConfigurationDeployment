@@ -1,4 +1,5 @@
 using System.Text.Json;
+
 using Azure.Data.AppConfiguration;
 using Azure.Identity;
 
@@ -13,41 +14,16 @@ public class AzureAppSettingsKeyExtractor
         _source = source;
     }
 
-    public async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeys()
+    public async Task<IEnumerable<SettingsKey>> ExtractKeys()
     {
-        var sourceKeys = new List<AzureAppSettingsKey>();
+        var sourceKeys = new List<SettingsKey>();
 
         sourceKeys.AddRange(await ExtractKeysFrom(_source));
 
         return sourceKeys;
     }
 
-    public async Task<IEnumerable<AzureAppSettingsKey>> ImportFrom(string fileName)
-    {
-        var json = File.ReadAllText(fileName);
-
-        var sourceKeys = JsonSerializer.Deserialize<IEnumerable<AzureAppSettingsKey>>(json);
-
-        return sourceKeys;
-    }
-
-    public async Task Dump(string fileName)
-    {
-        var keys = await ExtractKeys();
-        var json = JsonSerializer.Serialize(
-            keys,
-            new JsonSerializerOptions
-            {
-                WriteIndented = true,
-                IgnoreReadOnlyFields = true,
-                IgnoreReadOnlyProperties = true,
-            }
-        );
-
-        await File.WriteAllTextAsync(fileName, json);
-    }
-
-    private async Task<IEnumerable<AzureAppSettingsKey>> ExtractKeysFrom(
+    private async Task<IEnumerable<SettingsKey>> ExtractKeysFrom(
         AzureAppSettingsKeySource source
     )
     {
@@ -57,14 +33,14 @@ public class AzureAppSettingsKeyExtractor
             new SettingSelector() { LabelFilter = source.Label, KeyFilter = source.KeyPrefix + "*" }
         );
 
-        var destinationKeys = new List<AzureAppSettingsKey>();
+        var destinationKeys = new List<SettingsKey>();
         await foreach (var setting in settings)
         {
             destinationKeys.Add(
-                new AzureAppSettingsKey(
+                new SettingsKey(
                     source.KeyPrefix,
                     setting.Label,
-                    setting.Key.Replace(source.KeyPrefix, string.Empty),
+                    setting.Key,
                     setting.Value,
                     setting.ContentType
                 )

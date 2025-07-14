@@ -1,6 +1,8 @@
 using System.Reflection;
+
 using Azure.Core;
 using Azure.Identity;
+
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Configuration.Memory;
 using Microsoft.Extensions.Configuration.UserSecrets;
@@ -43,11 +45,11 @@ public class EndToEndTests
         var appSettingskeyExtractor = new AzureAppSettingsKeyExtractor(appSettingsSource);
         var appSettingsKeys = await appSettingskeyExtractor.ExtractKeys();
 
-        var matchedKeys = ConfigurationKeyToAzureAppSettingsKeyMatcher.MatchKeys(
+        var matchedKeys = KeyMatcher.MatchKeys(
             configurationKeys,
             appSettingsKeys
         );
-        var updateActions = ConfigurationKeyToAzureAppSettingsKeyMatcher.AssignUpdateActions(
+        var updateActions = UpdateActionsToMatchedKeysAssigner.AssignUpdateActions(
             matchedKeys
         );
 

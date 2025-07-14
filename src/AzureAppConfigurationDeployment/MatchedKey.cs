@@ -1,7 +1,8 @@
 namespace AzureAppConfigurationDeployment;
 
 public record MatchedKey(
-    ConfigurationKey SourceKey,
-    AzureAppSettingsKey DestinationKey,
+    SettingsKey SourceKey,
+    SettingsKey DestinationKey,
     MatchedKeyType MatchType
 );
+
