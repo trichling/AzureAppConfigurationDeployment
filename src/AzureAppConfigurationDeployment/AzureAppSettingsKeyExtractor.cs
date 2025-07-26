@@ -33,6 +33,7 @@ public class AzureAppSettingsKeyExtractor
             new SettingSelector() { LabelFilter = source.Label, KeyFilter = source.KeyPrefix + "*" }
         );
 
+
         var destinationKeys = new List<SettingsKey>();
         await foreach (var setting in settings)
         {
