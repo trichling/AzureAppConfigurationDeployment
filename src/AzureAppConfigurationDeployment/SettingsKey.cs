@@ -3,14 +3,10 @@ using System.Text.Json.Serialization;
 
 namespace AzureAppConfigurationDeployment;
 
-public record SettingsKey(
-    string Label,
-    string Key,
-    string Value
-)
+public record SettingsKey(string Label, string Key, string Value)
 {
     public SettingsKey(string keyPrefix, string label, string key, string value, string mimeType)
-    : this(label, key, value)
+        : this(label, key, value)
     {
         if (!string.IsNullOrEmpty(keyPrefix))
             Key = Key.Replace(keyPrefix ?? "", string.Empty);
@@ -103,6 +99,5 @@ public record KeyVaultValue
     {
         [JsonPropertyName("uri")]
         public string Uri { get; set; } = string.Empty;
-
     }
 }
